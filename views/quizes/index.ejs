@@ -4,9 +4,17 @@ Buscador de pregunta: <input type="text" name="search" value="texto a buscar" on
 </form><p>
 <a href="/quizes/new"><input type="submit" value="Crear pregunta"></a><p>
 <table>
+	<thead>
+		<tr>
+			<th>Pregunta</th>
+			<th>Temática</th>
+			<th>Opciones</th>
+		</tr>
+	</thead>
 <% var i; for(i=0; i < quizes.length; i++) { %>
 	<tr>
 		<td><a href="quizes/<%= quizes[i].id %>"><%= quizes[i].pregunta %></a></td>
+		<td><%= quizes[i].tematica %></td>
 		<td><a href="quizes/<%= quizes[i].id %>/edit"><button>editar</button></a><td>
 		<td>
 			<form method="post" action="quizes/<%= quizes[i].id%>?_method=delete">
