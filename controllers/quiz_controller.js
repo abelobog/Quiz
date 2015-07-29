@@ -80,6 +80,15 @@ exports.update = function (req, res) {
 	});
 };
 
+
+//DELETE /quizes/:id 
+exports.destroy = function (req, res, next) {
+	req.quiz.destroy().then(function () {
+		res.redirect('/quizes');
+	}).catch(function (error) { next(error) });
+};
+
+
 //GET /quizes/answer
 exports.answer = function (req, res) {
 	var resultado = 'Incorrecto';
