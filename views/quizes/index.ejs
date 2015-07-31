@@ -2,19 +2,20 @@
 Buscador de pregunta: <input type="text" name="search" value="texto a buscar" onFocus="search.value=''"/>
 <input type="submit" value="Enviar">
 </form><p>
+<% if (session.user) {%>
 <a href="/quizes/new"><input type="submit" value="Crear pregunta"></a><p>
 <table>
 	<thead>
 		<tr>
-			<th>Pregunta</th>
 			<th>Temática</th>
+			<th>Pregunta</th>
 			<th>Opciones</th>
 		</tr>
 	</thead>
 <% var i; for(i=0; i < quizes.length; i++) { %>
 	<tr>
-		<td><a href="quizes/<%= quizes[i].id %>"><%= quizes[i].pregunta %></a></td>
 		<td><%= quizes[i].tematica %></td>
+		<td><a href="quizes/<%= quizes[i].id %>"><%= quizes[i].pregunta %></a></td>
 		<td><a href="quizes/<%= quizes[i].id %>/edit"><button>editar</button></a><td>
 		<td>
 			<form method="post" action="quizes/<%= quizes[i].id%>?_method=delete">
@@ -24,4 +25,19 @@ Buscador de pregunta: <input type="text" name="search" value="texto a buscar" on
 	</tr>
 <% } %>
 </table>
-
+<%} else {%>
+	<table>
+	<thead>
+		<tr>
+			<th>Temática</th>
+			<th>Pregunta</th>
+		</tr>
+	</thead>
+	<% var i; for(i=0; i < quizes.length; i++) { %>
+		<tr>
+			<td><%= quizes[i].tematica %></td>
+			<td><a href="quizes/<%= quizes[i].id %>"><%= quizes[i].pregunta %></a></td>
+		</tr>
+	<% } %>
+	</table>
+<%}%>
