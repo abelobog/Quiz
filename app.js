@@ -81,5 +81,16 @@ app.use(function(err, req, res, next) {
     });
 });
 
+app.use(function (req, res, next) {
+    var time = new Date().getTime();
+    if (req.session.user) {
+        if ((time - req.session.last) >= 120000){
+            req.session.destroy();
+        } else {
+            req.session.last = time;
+        }
+    }
+    next();
+});
 
 module.exports = app;
