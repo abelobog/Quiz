@@ -1,6 +1,6 @@
 //MW de autorización de accesos HTTP restringidos
 exports.loginRequired = function (req, res, next) {
-	if (req.session.user && req.session.last) {
+	if (req.session.user) {
 		next();
 	} else {
 		res.redirect('/login');
@@ -21,7 +21,7 @@ exports.create = function (req, res) {
 
 	var userController = require('./user_controller');
 	userController.autenticar(login, password, function (error, user) {
-		if (error) { //si hay error retornamod mensajes de error de sesión
+		if (error) { //si hay error retornamos mensajes de error de sesión
 			req.session.errors = [{"message": 'Se ha producido un error: ' + error}];
 			res.redirect('/login');
 			return;
@@ -29,6 +29,12 @@ exports.create = function (req, res) {
 		//Crear req.session.user y guardar campos id y username
 		// La sesión se define por la existencia de: req.session.user
 		req.session.user = {id:user.id, username:user.username};
+
+		// Crea req.session.time para guardar la hora del reloj del sistema en autologout
+		//req.session.last = new Date().getTime();
+		req.session.autoLogout = false; //para mostrar mensaje si expiró la sesión
+
+		console.log('Paht -> ' + req.session.redir);
 		res.redirect(req.session.redir.toString()); //redirección a path anterior a login
 	});
 };
@@ -36,5 +42,9 @@ exports.create = function (req, res) {
 //DELETE /logout --Destruir session
 exports.destroy = function (req, res) {
 	delete req.session.user;
-	res.redirect(req.session.redir.toString()); //redirect a path anterior a login
-}
+	if (req.session.autoLogout) {
+		res.redirect("/login");
+	}else {
+		res.redirect(req.session.redir.toString()); //redirect a path anterior a login
+	}
+};

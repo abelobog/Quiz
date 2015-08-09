@@ -43,8 +43,51 @@ app.use(function (req, res, next) {
 
     //hacer visible req.session en las vistas
     res.locals.session = req.session;
+
+    /*if (req.session.time){
+        var lastTime = new Date().getTime();
+        var interval = lastTime - req.session.time;
+        
+        if (interval > 120000) {
+            delete req.session.time;
+            req.session.autoLogout = true; 
+            res.redirect("/logout");
+        } else {
+            req.session.time = lastTime;
+        }
+    }
+    */
+    
     next();
-})
+});
+
+
+app.use(function(req, res, next) {
+    if (req.session.user) { // Comprobamos si existe usuario
+
+        var newTime = new Date();
+
+        if (!req.session.newHour) {
+            req.session.newHour = newTime.getTime();
+            req.session.hour = newTime.toLocaleString();
+        } else {
+            if ((newTime-req.session.newHour)/1000 > 120) {
+                req.session.autoLogout = true;
+                delete req.session.newHour;
+                delete req.session.user;
+            } else {
+                req.session.newHour = newTime.getTime();
+                req.session.hour = newTime.toLocaleString();
+            }
+        }
+    }
+
+    res.locals.session = req.session;
+    next();
+
+});
+
+
 
 app.use('/', routes);
 
@@ -81,16 +124,20 @@ app.use(function(err, req, res, next) {
     });
 });
 
-app.use(function (req, res, next) {
+
+/* MW para controlar la expiración de la sesión 
+app.use(function(req, res, next){
     var time = new Date().getTime();
     if (req.session.user) {
         if ((time - req.session.last) >= 120000){
-            req.session.destroy();
+            delete req.session.time;
+            req.session.autoLogout = true;
+            res.redirect('/logout');//req.session.destroy();
         } else {
             req.session.last = time;
         }
     }
     next();
 });
-
+*/
 module.exports = app;

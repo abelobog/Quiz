@@ -1,4 +1,10 @@
 <h2>Login</h2>
+
+<% if (session.autoLogout && session.newHour != "undefined") { %>
+	<br/><label class="warning">Sesión expirada por inactividad, vuelva a autenticarse</label>
+	<% session.autoLogout = false %>
+<% } %>
+
 <form method='POST' action='/login'>
 
 	<div class="field">
